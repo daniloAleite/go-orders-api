@@ -9,13 +9,13 @@ import (
 
 func main() {
 
-	log.Printf("Initializing server settings!")
+	log.Printf("initializing server settings")
 	srv := server.New()
 
 	addr := ":8080"
 	log.Printf("server is listening on %s", addr)
 
 	if err := http.ListenAndServe(addr, srv.Handler()); err != nil {
-		log.Fatalf("Server failed: %v", err)
+		log.Fatalf("server failed: %v", err)
 	}
 }

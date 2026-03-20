@@ -22,7 +22,7 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req model.CreateOrderRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
@@ -36,7 +36,19 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	if err := json.NewEncoder(w).Encode(order); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
+	orders := h.service.List()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(orders); err != nil {
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		return
 	}
 }

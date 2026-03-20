@@ -19,8 +19,8 @@ func New() *Server {
 
 	//order
 	orderRepo := repository.NewOrderRepository()
-	ordeService := service.NewOrderService(orderRepo)
-	orderHandler := handler.NewOrderHandler(ordeService)
+	orderService := service.NewOrderService(orderRepo)
+	orderHandler := handler.NewOrderHandler(orderService)
 
 	// Criação dos endpoints
 	mux.HandleFunc("GET /health", healthHandler.GetStatus)
