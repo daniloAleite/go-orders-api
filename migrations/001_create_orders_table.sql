@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGSERIAL PRIMARY KEY,
+    customer TEXT NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/daniloAleite/go-orders-api/internal/config"
@@ -13,13 +14,13 @@ type Server struct {
 	mux *http.ServeMux
 }
 
-func New(cfg *config.Config) *Server {
+func New(cfg *config.Config, db *sql.DB) *Server {
 	mux := http.NewServeMux()
 
 	healthHandler := handler.NewHealthHandler(cfg.AppName, cfg.AppVersion)
 
 	//order
-	orderRepo := repository.NewOrderRepository()
+	orderRepo := repository.NewPostgresOrderRepository(db)
 	orderService := service.NewOrderService(orderRepo)
 	orderHandler := handler.NewOrderHandler(orderService)
 

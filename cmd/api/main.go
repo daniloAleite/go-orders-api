@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/daniloAleite/go-orders-api/internal/config"
+	"github.com/daniloAleite/go-orders-api/internal/db"
 	"github.com/daniloAleite/go-orders-api/internal/server"
 )
 
@@ -14,7 +15,13 @@ func main() {
 
 	cfg := config.Load()
 
-	srv := server.New(cfg)
+	postgressDB, err := db.NewPostgresConnection(cfg)
+	if err != nil {
+		log.Fatalf("database connection failed: %v", err)
+	}
+	defer postgressDB.Close()
+
+	srv := server.New(cfg, postgressDB)
 
 	addr := ":" + cfg.Port
 	log.Printf("starting %s on port %s", cfg.AppName, cfg.Port)

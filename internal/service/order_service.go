@@ -5,14 +5,18 @@ import (
 	"strings"
 
 	orderModel "github.com/daniloAleite/go-orders-api/internal/model/order"
-	"github.com/daniloAleite/go-orders-api/internal/repository"
 )
 
-type OrderService struct {
-	repo *repository.OrderRepository
+type OrderRepository interface {
+	Create(customer string, amount float64) (orderModel.Order, error)
+	List() ([]orderModel.Order, error)
 }
 
-func NewOrderService(repo *repository.OrderRepository) *OrderService {
+type OrderService struct {
+	repo OrderRepository
+}
+
+func NewOrderService(repo OrderRepository) *OrderService {
 	return &OrderService{
 		repo: repo,
 	}
@@ -29,10 +33,18 @@ func (s *OrderService) Create(req orderModel.CreateOrderRequest) (orderModel.Ord
 		return orderModel.Order{}, errors.New("amount must be greater than zero")
 	}
 
-	order := s.repo.Create(customer, req.Amount)
+	order, err := s.repo.Create(customer, req.Amount)
+	if err != nil {
+		return orderModel.Order{}, err
+	}
 	return order, nil
 }
 
-func (s *OrderService) List() []orderModel.Order {
-	return s.repo.List()
+func (s *OrderService) List() ([]orderModel.Order, error) {
+
+	orders, err := s.repo.List()
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }

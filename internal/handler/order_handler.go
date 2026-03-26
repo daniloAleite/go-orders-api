@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/daniloAleite/go-orders-api/internal/httpapi"
-	model "github.com/daniloAleite/go-orders-api/internal/model/order"
+	orderModel "github.com/daniloAleite/go-orders-api/internal/model/order"
 	"github.com/daniloAleite/go-orders-api/internal/service"
 )
 
@@ -20,7 +20,7 @@ func NewOrderHandler(service *service.OrderService) *OrderHandler {
 }
 
 func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req model.CreateOrderRequest
+	var req orderModel.CreateOrderRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		httpapi.WriteError(w, http.StatusBadRequest, "invalid request body")
@@ -37,6 +37,10 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
-	orders := h.service.List()
+	orders, err := h.service.List()
+	if err != nil {
+		httpapi.WriteError(w, http.StatusInternalServerError, "failed to list orders")
+		return
+	}
 	httpapi.WriteJSON(w, http.StatusOK, orders)
 }
