@@ -22,11 +22,11 @@ func (s *OrderService) Create(req orderModel.CreateOrderRequest) (orderModel.Ord
 	customer := strings.TrimSpace(req.Customer)
 
 	if customer == "" {
-		return orderModel.Order{}, errors.New("Customer is required!")
+		return orderModel.Order{}, errors.New("customer is required")
 	}
 
 	if req.Amount <= 0 {
-		return orderModel.Order{}, errors.New("Amount must be greater than zero!")
+		return orderModel.Order{}, errors.New("amount must be greater than zero")
 	}
 
 	order := s.repo.Create(customer, req.Amount)

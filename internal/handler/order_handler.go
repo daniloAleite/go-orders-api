@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/daniloAleite/go-orders-api/internal/httpapi"
 	model "github.com/daniloAleite/go-orders-api/internal/model/order"
 	"github.com/daniloAleite/go-orders-api/internal/service"
 )
@@ -22,21 +23,20 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req model.CreateOrderRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		httpapi.WriteError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	order, err := h.service.Create(req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		httpapi.WriteError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	httpapi.WriteJSON(w, http.StatusCreated, order)
+}
 
-	if err := json.NewEncoder(w).Encode(order); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-		return
-	}
+func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
+	orders := h.service.List()
+	httpapi.WriteJSON(w, http.StatusOK, orders)
 }
