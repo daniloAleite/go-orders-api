@@ -8,10 +8,16 @@ import (
 	model "github.com/daniloAleite/go-orders-api/internal/model/health"
 )
 
-type HealthHandler struct{}
+type HealthHandler struct {
+	appName    string
+	AppVersion string
+}
 
-func NewHealthHandler() *HealthHandler {
-	return &HealthHandler{}
+func NewHealthHandler(appName, appVersion string) *HealthHandler {
+	return &HealthHandler{
+		appName:    appName,
+		AppVersion: appVersion,
+	}
 }
 
 func (h *HealthHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +25,7 @@ func (h *HealthHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
 	health := model.HealthResponse{
 
 		Status:    "stable",
-		Version:   "1.0.0",
+		Version:   h.AppVersion,
 		Timestamp: time.Now(),
 	}
 
